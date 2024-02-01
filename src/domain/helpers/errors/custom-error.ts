@@ -9,11 +9,11 @@ export class CustomError extends Error {
     }
 
     public static badRequest(message: string, details?: string) {
-        return new CustomError(400, message), details;
+        return new CustomError(400, message, details);
     }
 
     public static unauthorized(message: string, details?: string) {
-        return new CustomError(401, message), details;
+        return new CustomError(401, message, details);
     }
 
     public static forbidden(message: string, details?: string) {

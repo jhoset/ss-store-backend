@@ -1,5 +1,4 @@
 import { JwtAdapter, bcryptAdapter } from "../../config";
-import { SystemChgType } from "../../config/constants";
 import { dbClient } from "../../data";
 import { LoginUserDto, RegisterUserDto } from "../dtos/auth";
 import { UserDto } from "../dtos/user";
@@ -14,12 +13,10 @@ export class AuthService {
     public async registerUser(registerUserDto: RegisterUserDto) {
         const existingUserEmail = await dbClient.user.findFirst({ where: { email: registerUserDto.email } });
         if (existingUserEmail) throw CustomError.badRequest("A user already exists with the provided email.");
-        
         const userToCreate = UserMapper.from(registerUserDto);
         userToCreate.userName = generateUserName(registerUserDto.firstName, registerUserDto.lastName);
         userToCreate.password = bcryptAdapter.hash(userToCreate.password);
         userToCreate.changedBy = userToCreate.userName;
-        userToCreate.changeType = SystemChgType.create;
         const newUser = await dbClient.user.create({
             data: userToCreate
         })

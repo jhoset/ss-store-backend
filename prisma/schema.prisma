@@ -13,6 +13,11 @@ datasource db {
 //******************************************************************************************
 //*                ROLE-BASED ACCESS CONTROL (RBAC) PATTERN
 //******************************************************************************************
+enum ChgType {
+  C
+  U
+  D
+}
 
 model User {
   id            Int              @id @default(autoincrement())
@@ -29,7 +34,7 @@ model User {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   changedBy  String   @db.VarChar(55)
-  changeType String   @db.VarChar(1)
+  changeType ChgType  @default(C)
 }
 
 model UserRoleDetail {
@@ -42,7 +47,7 @@ model UserRoleDetail {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   changedBy  String   @db.VarChar(55)
-  changeType String   @db.VarChar(1)
+  changeType ChgType  @default(C)
 
   @@id([userId, roleId])
 }
@@ -57,7 +62,7 @@ model Role {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   changedBy  String   @db.VarChar(55)
-  changeType String   @db.VarChar(1)
+  changeType ChgType  @default(C)
 }
 
 model RolePermissionDetail {
@@ -70,7 +75,7 @@ model RolePermissionDetail {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   changedBy  String   @db.VarChar(55)
-  changeType String   @db.VarChar(1)
+  changeType ChgType  @default(C)
 
   @@id([roleId, permissionId])
 }
@@ -84,5 +89,5 @@ model Permission {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   changedBy  String   @db.VarChar(55)
-  changeType String   @db.VarChar(1)
+  changeType ChgType  @default(C)
 }

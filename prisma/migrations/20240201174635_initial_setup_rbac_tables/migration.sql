@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "ChgType" AS ENUM ('C', 'U', 'D');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
@@ -12,7 +15,7 @@ CREATE TABLE "User" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "changedBy" VARCHAR(55) NOT NULL,
-    "changeType" VARCHAR(1) NOT NULL,
+    "changeType" "ChgType" NOT NULL DEFAULT 'C',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -25,7 +28,7 @@ CREATE TABLE "UserRoleDetail" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "changedBy" VARCHAR(55) NOT NULL,
-    "changeType" VARCHAR(1) NOT NULL,
+    "changeType" "ChgType" NOT NULL DEFAULT 'C',
 
     CONSTRAINT "UserRoleDetail_pkey" PRIMARY KEY ("userId","roleId")
 );
@@ -38,7 +41,7 @@ CREATE TABLE "Role" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "changedBy" VARCHAR(55) NOT NULL,
-    "changeType" VARCHAR(1) NOT NULL,
+    "changeType" "ChgType" NOT NULL DEFAULT 'C',
 
     CONSTRAINT "Role_pkey" PRIMARY KEY ("id")
 );
@@ -51,7 +54,7 @@ CREATE TABLE "RolePermissionDetail" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "changedBy" VARCHAR(55) NOT NULL,
-    "changeType" VARCHAR(1) NOT NULL,
+    "changeType" "ChgType" NOT NULL DEFAULT 'C',
 
     CONSTRAINT "RolePermissionDetail_pkey" PRIMARY KEY ("roleId","permissionId")
 );
@@ -64,7 +67,7 @@ CREATE TABLE "Permission" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "changedBy" VARCHAR(55) NOT NULL,
-    "changeType" VARCHAR(1) NOT NULL,
+    "changeType" "ChgType" NOT NULL DEFAULT 'C',
 
     CONSTRAINT "Permission_pkey" PRIMARY KEY ("id")
 );

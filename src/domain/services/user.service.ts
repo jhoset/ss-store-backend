@@ -4,6 +4,7 @@ import { CustomError, generateUserName } from "../helpers";
 import { CreateUserDto, UpdateUserDto, UserDto } from "../dtos/user";
 import { PaginationDto, PaginationResultDto } from "../dtos/shared";
 import { bcryptAdapter } from "../../config";
+import { CurrentUserDto } from "../dtos/auth";
 
 export class UserService {
 
@@ -31,11 +32,11 @@ export class UserService {
         }
     }
 
-    public async createUser(createUserDto: CreateUserDto) {
+    public async createUser(createUserDto: CreateUserDto, currentUser: CurrentUserDto) {
         createUserDto.password = bcryptAdapter.hash(createUserDto.password);
         createUserDto.userName = generateUserName(createUserDto.firstName, createUserDto.lastName);
         const userToCreate = UserMapper.from(createUserDto);
-        console.log({userToCreate})
+        userToCreate.changedBy = currentUser.userName;
         const newUser = await dbClient.user.create({
             data: userToCreate
         })
@@ -43,11 +44,12 @@ export class UserService {
     }
 
 
-    public async updateUser(id: number, updateUserDto: UpdateUserDto) {
+    public async updateUser(id: number, updateUserDto: UpdateUserDto, currentUser: CurrentUserDto) {
         const existUser = await dbClient.user.findFirst({ where: { id, isDeleted: false } });
         if (!existUser) throw CustomError.notFound(`No user found with ID: ${id}`)
         const userToUpdate = UserMapper.from(updateUserDto);
-        console.log({ userToUpdate })
+        userToUpdate.changedBy = currentUser.userName;
+        userToUpdate.changeType = "U";
         const userUpdated = await dbClient.user.update({
             where: {
                 id
@@ -57,12 +59,12 @@ export class UserService {
         return UserDto.mapFrom(userUpdated);
     }
 
-    public async deleteUser(id: number) {
+    public async deleteUser(id: number, currentUser: CurrentUserDto) {
         const existUser = await dbClient.user.findFirst({ where: { id, isDeleted: false } });
         if (!existUser) throw CustomError.notFound(`No user found with ID: ${id}`)
         const userDeleted = await dbClient.user.update({
             where: { id },
-            data: { isDeleted: true }
+            data: { isDeleted: true, changedBy: currentUser.userName, changeType: "D" }
         })
         return userDeleted ? true : false;
     }

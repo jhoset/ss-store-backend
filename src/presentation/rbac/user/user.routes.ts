@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { UserService } from "../../../domain/services";
 import { UserController } from "./user.controller";
+import { AuthMiddleware, ReqParamsMiddleware } from "../../middlewares";
 
 export class UserRoutes {
 
@@ -9,11 +10,11 @@ export class UserRoutes {
         const controller = new UserController(service);
 
         const router = Router();
-
+        router.use(AuthMiddleware.validateJWT);
         router.get('/', controller.getUsers)
         router.post('/', controller.createUser)
-        router.put('/:id', controller.updateUser)
-        router.delete('/:id', controller.deleteUser)
+        router.put('/:id', ReqParamsMiddleware.checkId(), controller.updateUser)
+        router.delete('/:id', ReqParamsMiddleware.checkId(), controller.deleteUser)
 
         return router;
     }

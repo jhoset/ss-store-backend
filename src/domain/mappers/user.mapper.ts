@@ -1,4 +1,4 @@
-import { User } from "@prisma/client"
+import { User } from "@prisma/client";
 import { CustomError } from "../helpers";
 
 export class UserMapper {

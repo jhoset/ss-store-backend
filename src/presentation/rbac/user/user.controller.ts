@@ -24,31 +24,25 @@ export class UserController {
 
         const [validationError, createUserDto] = CreateUserDto.mapFrom(req.body);
         if (validationError) return res.status(400).json(validationError);
-        // TODO: Creation of middleware to manage user Auth
-        createUserDto?.initMetaData('admin', 'C');
 
-        this.userService.createUser(createUserDto!)
+        this.userService.createUser(createUserDto!, req.body.currentUser)
             .then(result => res.status(201).json({ result }))
             .catch(error => handleError(error, res));
     }
 
     public updateUser = (req: Request, res: Response) => {
         const id =  +req.params.id;
-        if (isNaN(id) || id <= 0) throw res.status(400).json({ error: "Invalid User ID Parameter." })
         const [validationError, updateUserDto] = UpdateUserDto.mapFrom(req.body);
         if (validationError) return res.status(400).json(validationError);
-        updateUserDto?.initMetaData('admin', 'U');
 
-        this.userService.updateUser(id, updateUserDto!)
+        this.userService.updateUser(id, updateUserDto!, req.body.currentUser)
             .then(result => res.status(200).json({ result }))
             .catch(error => handleError(error, res));
     }
 
     public deleteUser = (req: Request, res: Response) => {
         const id = +req.params.id;
-        //TODO: Set Delete acction with userName
-        if (isNaN(id) || id <= 0) throw res.status(400).json({ error: "Invalid User ID Parameter." })
-        this.userService.deleteUser(id)
+        this.userService.deleteUser(id, req.body.currentUser)
             .then(result => res.status(200).json({ result }))
             .catch(error => handleError(error, res));
     }

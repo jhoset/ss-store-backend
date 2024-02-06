@@ -1,14 +1,15 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction } from "express";
 import { JwtAdapter } from "../../config";
 import { ITokenPayload } from "../../domain/interfaces";
 import { dbClient } from "../../data";
 import { CurrentUserDto } from "../../domain/dtos/auth";
+import { CustomRequest, CustomResponse } from "../interfaces";
 
 
 export class AuthMiddleware {
 
 
-    public static async validateJWT(req: Request, res: Response, next: NextFunction) {
+    public static async validateJWT(req: CustomRequest, res: CustomResponse, next: NextFunction) {
         const authorization = req.headers.authorization;
         if (!authorization) return res.status(401).json({ error: "No Authorization header provided" });
         if (!authorization.startsWith('Bearer ')) return res.status(401).json({ error: "Invalid Bearer Token" });
@@ -23,7 +24,7 @@ export class AuthMiddleware {
 
             // TODO: Implemente Mail Service to Verify Acccount
             // if (!userDb.verifiedEmail) return res.status(401).json({ error: 'Unverified Account' });
-            req.body.currentUser = CurrentUserDto.mapFrom(userDb);
+            req.currentUser = CurrentUserDto.mapFrom(userDb);
             next();
         } catch (error) {
             console.log(`Auth Middleware Error: ${error}`);

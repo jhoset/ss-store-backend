@@ -1,14 +1,15 @@
-import { Request, Response } from "express";
 import { AuthService } from "../../domain/services";
 import { CreateUserDto } from "../../domain/dtos/user";
 import { handleError } from "../../domain/helpers";
 import { LoginUserDto } from "../../domain/dtos/auth";
+import { CustomRequest, CustomResponse } from "../interfaces";
+
 
 export class AuthController {
 
     constructor(private readonly authService: AuthService) { }
 
-    public registerUser = (req: Request, res: Response) => {
+    public registerUser = (req: CustomRequest, res: CustomResponse) => {
         const [validationError, createUserDto] = CreateUserDto.mapFrom(req.body);
         if (validationError) return res.status(400).json(validationError);
 
@@ -17,7 +18,7 @@ export class AuthController {
             .catch(error => handleError(error, res));
     }
 
-    public loginUser = (req: Request, res: Response) => {
+    public loginUser = (req: CustomRequest, res: CustomResponse) => {
         const [validationError, loginUserDto] = LoginUserDto.mapFrom(req.body);
         if (validationError) return res.status(400).json(validationError);
 

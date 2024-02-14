@@ -11,10 +11,13 @@ export class UserRoutes {
 
         const router = Router();
         router.use(AuthMiddleware.validateJWT);
-        router.get('/', controller.getUsers)
-        router.post('/', controller.createUser)
-        router.put('/:id', ReqParamsMiddleware.checkId(), controller.updateUser)
-        router.delete('/:id', ReqParamsMiddleware.checkId(), controller.deleteUser)
+        router.get('/roles', controller.getUsersWithRoles);
+        router.post('/roles', controller.createUserWithExistingRoles);
+        router.put('/roles', controller.updateUserRoles)
+        router.get('/', controller.getUsers);
+        router.post('/', controller.createUser);
+        router.put('/:id', ReqParamsMiddleware.checkId(), controller.updateUser);
+        router.delete('/:id', ReqParamsMiddleware.checkId(), controller.deleteUser);
 
         return router;
     }

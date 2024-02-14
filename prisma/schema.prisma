@@ -43,11 +43,8 @@ model UserRoleDetail {
   role   Role @relation(fields: [roleId], references: [id])
   roleId Int
 
-  isDeleted  Boolean  @default(false)
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
   changedBy  String   @db.VarChar(55)
-  changeType ChgType  @default(C)
 
   @@id([userId, roleId])
 }
@@ -71,11 +68,8 @@ model RolePermissionDetail {
   permission   Permission @relation(fields: [permissionId], references: [id])
   permissionId Int
 
-  isDeleted  Boolean  @default(false)
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
   changedBy  String   @db.VarChar(55)
-  changeType ChgType  @default(C)
 
   @@id([roleId, permissionId])
 }

@@ -24,11 +24,8 @@ CREATE TABLE "User" (
 CREATE TABLE "UserRoleDetail" (
     "userId" INTEGER NOT NULL,
     "roleId" INTEGER NOT NULL,
-    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
     "changedBy" VARCHAR(55) NOT NULL,
-    "changeType" "ChgType" NOT NULL DEFAULT 'C',
 
     CONSTRAINT "UserRoleDetail_pkey" PRIMARY KEY ("userId","roleId")
 );
@@ -50,11 +47,8 @@ CREATE TABLE "Role" (
 CREATE TABLE "RolePermissionDetail" (
     "roleId" INTEGER NOT NULL,
     "permissionId" INTEGER NOT NULL,
-    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
     "changedBy" VARCHAR(55) NOT NULL,
-    "changeType" "ChgType" NOT NULL DEFAULT 'C',
 
     CONSTRAINT "RolePermissionDetail_pkey" PRIMARY KEY ("roleId","permissionId")
 );

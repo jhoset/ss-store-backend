@@ -50,4 +50,14 @@ export class RoleService {
         return dbRoleDeleted ? true : false;
     }
 
+    public async getManyRolesByIds(roleIds: number[]) {
+        if (roleIds.length === 0) {
+            return [];
+        }
+        const roles = await dbClient.role.findMany({
+            where: { id: { in: roleIds } }
+        })
+        return roles;
+    }
+
 }

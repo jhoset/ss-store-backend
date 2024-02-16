@@ -24,8 +24,8 @@ model User {
   firstName     String           @db.VarChar(50)
   middleName    String?          @db.VarChar(50)
   lastName      String           @db.VarChar(50)
-  userName      String           @db.VarChar(55)
-  email         String           @db.VarChar(100)
+  userName      String           @unique @db.VarChar(55)
+  email         String           @unique @db.VarChar(100)
   verifiedEmail Boolean          @default(false)
   password      String           @db.VarChar(60)
   roles         UserRoleDetail[]
@@ -43,15 +43,15 @@ model UserRoleDetail {
   role   Role @relation(fields: [roleId], references: [id])
   roleId Int
 
-  createdAt  DateTime @default(now())
-  changedBy  String   @db.VarChar(55)
+  createdAt DateTime @default(now())
+  changedBy String   @db.VarChar(55)
 
   @@id([userId, roleId])
 }
 
 model Role {
   id          Int                    @id @default(autoincrement())
-  name        String                 @db.VarChar(80)
+  name        String                 @unique @db.VarChar(80)
   users       UserRoleDetail[]
   permissions RolePermissionDetail[]
 
@@ -68,15 +68,15 @@ model RolePermissionDetail {
   permission   Permission @relation(fields: [permissionId], references: [id])
   permissionId Int
 
-  createdAt  DateTime @default(now())
-  changedBy  String   @db.VarChar(55)
+  createdAt DateTime @default(now())
+  changedBy String   @db.VarChar(55)
 
   @@id([roleId, permissionId])
 }
 
 model Permission {
   id    Int                    @id @default(autoincrement())
-  name  String                 @db.VarChar(80)
+  name  String                 @unique @db.VarChar(80)
   roles RolePermissionDetail[]
 
   isDeleted  Boolean  @default(false)

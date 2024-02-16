@@ -1,4 +1,4 @@
-import { BaseDto } from "../base.dto";
+import { RoleDto } from "../role";
 
 export class UserDto {
 
@@ -11,11 +11,16 @@ export class UserDto {
         public userName: string,
         public email: string,
         public verifiedEmail: boolean,
-    ) {}
+        public roles?: RoleDto[]
+    ) { }
 
     public static mapFrom(obj: { [key: string]: any }): UserDto {
-        const {id, firstName, middleName, lastName, userName, email, verifiedEmail } = obj;
-        return new UserDto(id,firstName, middleName, lastName, userName, email, verifiedEmail)
+        const { id, firstName, middleName, lastName, userName, email, verifiedEmail, roles } = obj;
+        let rolesDto
+        if (roles) {
+            rolesDto = roles.map((role: any) => RoleDto.mapFrom(role))
+        }
+        return new UserDto(id, firstName, middleName, lastName, userName, email, verifiedEmail, rolesDto)
     }
 
 }

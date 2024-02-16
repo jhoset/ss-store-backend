@@ -1,7 +1,7 @@
 import { dbClient } from "../../data";
 import { UserMapper } from "../mappers";
 import { CustomError, generateUserName } from "../helpers";
-import { CreateUserDto, CreateUserWithRoleDto, UpdateUserDto, UpdateUserRolesDto, UserDto, UserRolesDto } from "../dtos/user";
+import { CreateUserDto, CreateUserWithRolesDto, UpdateUserDto, UpdateUserWithRolesDto, UserDto, UserWithRolesDto } from "../dtos/user";
 import { PaginationDto, PaginationResultDto } from "../dtos/shared";
 import { bcryptAdapter } from "../../config";
 import { CurrentUserDto } from "../dtos/auth";
@@ -33,7 +33,7 @@ export class UserService {
                 roles: user.roles.map(({ role }) => role)
             }
         ))
-        const result = userWithRoles.map((user: any) => (UserRolesDto.mapFrom(user)));
+        const result = userWithRoles.map((user: any) => (UserWithRolesDto.mapFrom(user)));
         return {
             pagination: {
                 total,
@@ -70,16 +70,15 @@ export class UserService {
     }
 
 
-    public async createUserWithExistingRoles(createUserWithRoleDto: CreateUserWithRoleDto, currentUser: CurrentUserDto) {
+    public async createUserWithRoles(createUserWithRoleDto: CreateUserWithRolesDto, currentUser: CurrentUserDto) {
         const { roleIds } = createUserWithRoleDto;
-        const existingRoles = await dbClient.role.findMany({
+        const roles = await dbClient.role.findMany({
             where: {
-                id: {
-                    in: roleIds
-                }
+                isDeleted: false,
+                id: { in: roleIds }
             }
         })
-        if (!existingRoles || !existingRoles.length || (existingRoles.length !== roleIds.length)) {
+        if (roles.length && (roles.length !== roleIds.length)) {
             throw CustomError.badRequest(`At least one of the role IDs specified does not exists`)
         }
 
@@ -92,20 +91,18 @@ export class UserService {
             data: {
                 ...userToCreate,
                 roles: {
-                    create: roleIds.map(roleId => (
+                    create: roleIds.map(id => (
                         {
                             changedBy: currentUser.userName,
                             role: {
-                                connect: {
-                                    id: roleId,
-                                }
+                                connect: { id }
                             }
                         }
                     ))
                 }
             }
         })
-        return UserDto.mapFrom(newUser);
+        return UserDto.mapFrom({ ...newUser, roles });
     }
 
     public async createUser(createUserDto: CreateUserDto, currentUser: CurrentUserDto) {
@@ -136,49 +133,41 @@ export class UserService {
         return UserDto.mapFrom(userUpdated);
     }
 
-    public async updateUserRoles(updateUserRolesDto: UpdateUserRolesDto, currentUser: CurrentUserDto) {
-        const { userId, roleIds } = updateUserRolesDto;
-        const existUser = await dbClient.user.findFirst({ where: { id: userId, isDeleted: false }, include: { roles: true } });
-        if (!existUser) throw CustomError.notFound(`No user found with ID: ${userId}`)
-        await this.removeRolesOfUser(userId);
-        if (roleIds.length) {
-            const existingRoles = await this.getExistingRoleByIds(roleIds);
-            if (!existingRoles || !existingRoles.length || (existingRoles.length !== roleIds.length)) {
-                throw CustomError.badRequest(`At least one of the role IDs specified does not exists`)
+    public async updateUserWithRoles(updateUserRolesDto: UpdateUserWithRolesDto, currentUser: CurrentUserDto) {
+        const { id, roleIds } = updateUserRolesDto;
+
+        const roles = await dbClient.role.findMany({
+            where: {
+                isDeleted: false,
+                id: { in: roleIds }
             }
-            await this.assignRolesToUser(userId, roleIds, currentUser.userName);
+        })
+        if (roles.length && (roles.length !== roleIds.length)) {
+            throw CustomError.badRequest(`At least one of the role IDs specified does not exists`)
         }
 
-        const roles = await this.roleService.getManyRolesByIds(roleIds);
-        return UserRolesDto.mapFrom({ ...existUser, roles })
-
-    }
-
-    private async removeRolesOfUser(userId: number) {
-        const rolesDeleted = await dbClient.userRoleDetail.deleteMany({ where: { userId } })
-        return rolesDeleted;
-    }
-
-    private async assignRolesToUser(userId: number, roleIds: number[], currentUserName: string) {
-        const rolesAssigned = await dbClient.userRoleDetail.createMany({
-            data: roleIds.map(roleId => ({
-                changedBy: currentUserName,
-                userId,
-                roleId
-            }))
-        })
-        return rolesAssigned;
-    }
-
-    private async getExistingRoleByIds(roleIds: number[]) {
-        const existingRoles = await dbClient.role.findMany({
-            where: {
-                id: {
-                    in: roleIds
+        const userToUpdate = UserMapper.from(updateUserRolesDto);
+        userToUpdate.changedBy = currentUser.userName;
+        userToUpdate.changeType = "U";
+        const userUpdated = await dbClient.user.update({
+            where: { id },
+            data: {
+                ...userToUpdate,
+                roles: {
+                    deleteMany: {},
+                    create: roleIds.map(id => (
+                        {
+                            changedBy: currentUser.userName,
+                            role: {
+                                connect: { id }
+                            }
+                        }
+                    ))
                 }
             }
         })
-        return existingRoles;
+        return UserDto.mapFrom({ ...userUpdated, roles })
+
     }
 
     public async deleteUser(id: number, currentUser: CurrentUserDto) {

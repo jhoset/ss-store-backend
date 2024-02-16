@@ -1,7 +1,7 @@
 import { UserService } from "../../../domain/services";
 import { PaginationDto } from "../../../domain/dtos/shared";
 import { handleError } from "../../../domain/helpers";
-import { CreateUserDto, CreateUserWithRoleDto, UpdateUserDto, UpdateUserRolesDto } from "../../../domain/dtos/user";
+import { CreateUserDto, CreateUserWithRolesDto, UpdateUserDto, UpdateUserWithRolesDto } from "../../../domain/dtos/user";
 import { CustomRequest, CustomResponse } from "../../interfaces";
 
 export class UserController {
@@ -33,19 +33,19 @@ export class UserController {
 
     public createUserWithExistingRoles = (req: CustomRequest, res: CustomResponse) => {
 
-        const [validationError, createUserDto] = CreateUserWithRoleDto.mapFrom(req.body);
+        const [validationError, createUserDto] = CreateUserWithRolesDto.mapFrom(req.body);
         if (validationError) return res.status(400).json(validationError);
 
-        this.userService.createUserWithExistingRoles(createUserDto!, req.currentUser)
+        this.userService.createUserWithRoles(createUserDto!, req.currentUser)
             .then(result => res.status(201).json({ result }))
             .catch(error => handleError(error, res));
     }
 
     public updateUserRoles = (req: CustomRequest, res: CustomResponse) => {
-        const [validationError, updateUserRolesDto] = UpdateUserRolesDto.mapFrom(req.body);
+        const [validationError, updateUserRolesDto] = UpdateUserWithRolesDto.mapFrom(req.body);
         if (validationError) return res.status(400).json(validationError);
 
-        this.userService.updateUserRoles(updateUserRolesDto!, req.currentUser)
+        this.userService.updateUserWithRoles(updateUserRolesDto!, req.currentUser)
             .then(result => res.status(201).json({ result }))
             .catch(error => handleError(error, res));
     }

@@ -1,7 +1,4 @@
-export interface DtoValidationError {
-    error: string,
-    validationErrors: string[]
-}
+import { ValidationDtoError, ValidationError } from "../../helpers";
 
 export class PaginationDto {
 
@@ -10,17 +7,15 @@ export class PaginationDto {
         public readonly limit: number
     ) { }
 
-    public static mapFrom(page: number = 1, limit: number = 10): [DtoValidationError?, PaginationDto?] {
-        let validationErrors = [];
-        if (isNaN(page) || isNaN(limit)) {
-            validationErrors.push("Page and Limit must be numbers.");
-        } else {
-            if (page <= 0) validationErrors.push("Page must be greater than 0.");
-            if (limit <= 0) validationErrors.push("Limit must be greater than 0.")
-        }
+    public static mapFrom(page: number = 1, limit: number = 10): [ValidationDtoError?, PaginationDto?] {
+        let validationErrors: ValidationError[] = [];
+        if (isNaN(page)) validationErrors.push({ field: "page", errorMessage: "Page must be numbers" });
+        if (isNaN(limit)) validationErrors.push({ field: "limit", errorMessage: "Page must be numbers" });
+        if (!isNaN(page) && page <= 0) validationErrors.push({ field: "page", errorMessage: "Page must be greater than 0" });
+        if (!isNaN(limit) && limit <= 0) validationErrors.push({ field: "limit", errorMessage: "Limit must be greater than 0" })
 
         if (validationErrors.length) {
-            return [{ error: "Invalid fields in Pagination DTO.", validationErrors }, undefined];
+            return [{ error: "Invalid DTO", validationErrors }, undefined];
         }
         return [undefined, new PaginationDto(page, limit)]
 

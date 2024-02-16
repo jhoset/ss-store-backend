@@ -1,7 +1,7 @@
 import { RoleDto } from "../role";
 
 
-export class UserRolesDto {
+export class UserWithRolesDto {
 
 
     private constructor(
@@ -15,10 +15,10 @@ export class UserRolesDto {
         public roles: RoleDto[]
     ) { }
 
-    public static mapFrom(obj: { [key: string]: any }): UserRolesDto {
+    public static mapFrom(obj: { [key: string]: any }): UserWithRolesDto {
         const { id, firstName, middleName, lastName, userName, email, verifiedEmail, roles } = obj;
         const rolesDto = roles.map((role: Object) => RoleDto.mapFrom(role));
-        return new UserRolesDto(id, firstName, middleName, lastName, userName, email, verifiedEmail, rolesDto)
+        return new UserWithRolesDto(id, firstName, middleName, lastName, userName, email, verifiedEmail, rolesDto)
     }
 
 }

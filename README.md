@@ -1,4 +1,6 @@
-# NODE JS Project + TypeScript
+# NODE Project  with TypeScript - Express - PostgresSQL - Prisma ORM 
+
+## Authentication & Authorization based  on RBAC pattern design.
 
 This pre-initialized project has everything you need to work with TypeScript, Express and Rest.
 

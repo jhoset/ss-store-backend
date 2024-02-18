@@ -21,17 +21,17 @@ export class PermissionService {
         return PermissionDto.mapFrom(dbPermissionCreated);
     }
 
-    public async updatePermission(id: number, updatePermissionDto: UpdatePermissionDto, currentUser: CurrentUserDto) {
-        const permissionDb = await dbClient.permission.findFirst({ where: { id, isDeleted: false } });
-        if (!permissionDb) throw CustomError.notFound(`No permission found with ID: ${id}`);
+    public async updatePermission(updatePermissionDto: UpdatePermissionDto, currentUser: CurrentUserDto) {
+        const permissionDb = await dbClient.permission.findFirst({ where: { id: updatePermissionDto.id, isDeleted: false } });
+        if (!permissionDb) throw CustomError.notFound(`No permission found with ID: ${updatePermissionDto.id}`);
 
-        const permissionToUpdate = PermissionMapper.from(UpdatePermissionDto);
+        const permissionToUpdate = PermissionMapper.from(updatePermissionDto);
         permissionToUpdate.changedBy = currentUser.userName;
         permissionToUpdate.changeType = 'U';
 
         const dbPermissionUpdated = await dbClient.permission.update({
             where: {
-                id
+                id: updatePermissionDto.id
             },
             data: permissionToUpdate
         })

@@ -118,15 +118,15 @@ export class UserService {
 
 
 
-    public async updateUser(id: number, updateUserDto: UpdateUserDto, currentUser: CurrentUserDto) {
-        const existUser = await dbClient.user.findFirst({ where: { id, isDeleted: false } });
-        if (!existUser) throw CustomError.notFound(`No user found with ID: ${id}`)
+    public async updateUser(updateUserDto: UpdateUserDto, currentUser: CurrentUserDto) {
+        const existUser = await dbClient.user.findFirst({ where: { id: updateUserDto.id, isDeleted: false } });
+        if (!existUser) throw CustomError.notFound(`No user found with ID: ${updateUserDto.id}`)
         const userToUpdate = UserMapper.from(updateUserDto);
         userToUpdate.changedBy = currentUser.userName;
         userToUpdate.changeType = "U";
         const userUpdated = await dbClient.user.update({
             where: {
-                id
+                id: updateUserDto.id
             },
             data: userToUpdate
         })

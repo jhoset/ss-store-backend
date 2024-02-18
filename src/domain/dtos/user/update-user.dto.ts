@@ -18,6 +18,7 @@ export class UpdateUserDto extends BaseDto {
     public static mapFrom(obj: { [key: string]: any }): [ValidationDtoError?, UpdateUserDto?] {
         const { id, firstName, middleName, lastName, userName, email } = obj;
         let validationErrors: ValidationError[] = [];
+        if (!id || isNaN(+id) || id < 1) validationErrors.push({ field: "id", errorMessage: "User ID is invalid" });
         if (!firstName) validationErrors.push({ field: "firstName", errorMessage: "First Name is required" });
         if (!lastName) validationErrors.push({ field: "lastName", errorMessage: "Last Name is required" });
         if (!email) validationErrors.push({ field: "email", errorMessage: "Email is required" });

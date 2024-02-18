@@ -24,11 +24,10 @@ export class PermissionController {
     }
 
     public updatePermission = (req: CustomRequest, res: CustomResponse) => {
-        const id = +req.params.id;
         const [validationError, updatePermissionDto] = UpdatePermissionDto.mapFrom(req.body)
         if (validationError) return res.status(400).json(validationError);
 
-        this.permissionService.updatePermission(id, updatePermissionDto!, req.currentUser)
+        this.permissionService.updatePermission(updatePermissionDto!, req.currentUser)
             .then(result => res.status(200).json({ result }))
             .catch(error => handleError(error, res));
     }

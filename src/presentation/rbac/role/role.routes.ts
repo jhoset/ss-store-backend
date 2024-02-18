@@ -14,7 +14,8 @@ export class RoleRoutes {
         router.use(AuthMiddleware.validateJWT);
         router.get('/', controller.getRoles)
         router.post('/', controller.createRole)
-        router.put('/', ReqParamsMiddleware.checkId(), controller.updateRole)
+        //TODO: FIX PUT
+        router.put('/', controller.updateRole)
         router.delete('/:id', ReqParamsMiddleware.checkId(), controller.deleteRole)
         router.get('/permissions', controller.getRolesWithPermissions);
         router.post('/permissions', controller.createRoleWithPermissions);

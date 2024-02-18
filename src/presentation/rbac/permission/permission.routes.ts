@@ -9,11 +9,11 @@ export class PermissionRoutes {
         const router = Router();
         const service = new PermissionService();
         const controller = new PermissionController(service);
-        
+
         router.use(AuthMiddleware.validateJWT);
         router.get('/', controller.getPermissions);
         router.post('/', controller.createPermission);
-        router.put('/:id', ReqParamsMiddleware.checkId(), controller.updatePermission);
+        router.put('/', controller.updatePermission);
         router.delete('/:id', ReqParamsMiddleware.checkId(), controller.deletePermission)
 
 

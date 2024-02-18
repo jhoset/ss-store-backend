@@ -106,8 +106,8 @@ export class RoleService {
         return dbRoles.map(role => RoleDto.mapFrom(role));
     }
 
-    public async createRole(roleDto: CreateRoleDto, currentUser: CurrentUserDto) {
-        const roleToCreate = RoleMapper.from(roleDto);
+    public async createRole(createRoleDto: CreateRoleDto, currentUser: CurrentUserDto) {
+        const roleToCreate = RoleMapper.from(createRoleDto);
         roleToCreate.changedBy = currentUser.userName;
         const dbRoleCreated = await dbClient.role.create({
             data: roleToCreate
@@ -115,17 +115,17 @@ export class RoleService {
         return RoleDto.mapFrom(dbRoleCreated);
     }
 
-    public async updateRole(id: number, roleDto: UpdateRoleDto, currentUser: CurrentUserDto) {
-        const roleDb = await dbClient.role.findFirst({ where: { id, isDeleted: false } })
-        if (!roleDb) throw CustomError.notFound(`No role found with ID: ${id}`)
+    public async updateRole(updateRoleDto: UpdateRoleDto, currentUser: CurrentUserDto) {
+        const roleDb = await dbClient.role.findFirst({ where: { id: updateRoleDto.id, isDeleted: false } })
+        if (!roleDb) throw CustomError.notFound(`No role found with ID: ${updateRoleDto.id}`)
 
-        const roleToUpdate = RoleMapper.from(roleDto);
+        const roleToUpdate = RoleMapper.from(updateRoleDto);
         roleToUpdate.changedBy = currentUser.userName;
         roleToUpdate.changeType = "U";
 
         const dbRoleUpdated = await dbClient.role.update({
             where: {
-                id
+                id: updateRoleDto.id
             },
             data: roleToUpdate
         })

@@ -44,10 +44,9 @@ export class RoleController {
     }
 
     public updateRole = (req: CustomRequest, res: CustomResponse) => {
-        const id = +req.params.id;
         const [validationError, updateRoleDto] = UpdateRoleDto.mapFrom(req.body);
         if (validationError) return res.status(400).json(validationError);
-        this.roleService.updateRole(id, updateRoleDto!, req.currentUser)
+        this.roleService.updateRole(updateRoleDto!, req.currentUser)
             .then(result => res.status(200).json({ result }))
             .catch(error => handleError(error, res));
     }

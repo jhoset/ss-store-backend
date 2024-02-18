@@ -13,8 +13,7 @@ export class UserRoutes {
         router.use(AuthMiddleware.validateJWT);
         router.get('/', controller.getUsers);
         router.post('/', controller.createUser);
-        // todo: fix PUT
-        router.put('/', ReqParamsMiddleware.checkId(), controller.updateUser);
+        router.put('/', controller.updateUser);
         router.delete('/:id', ReqParamsMiddleware.checkId(), controller.deleteUser);
         router.get('/roles', controller.getUsersWithRoles);
         router.post('/roles', controller.createUserWithExistingRoles);

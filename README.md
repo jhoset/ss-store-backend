@@ -1,4 +1,8 @@
-# NODE JS Project + TypeScript
+# NODE Project  with TypeScript - Express - PostgresSQL - Prisma ORM 
+
+## Feat 1: Authentication & Authorization based  on RBAC pattern design.
+![imagen](https://github.com/jhoset/ss-store-backend/assets/29497145/20da0003-921c-4008-aee1-6f58a33107e3)
+
 
 This pre-initialized project has everything you need to work with TypeScript, Express and Rest.
 
